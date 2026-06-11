@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>KP-HCIP — Site Visit Report Drafting System v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#1a1f2e;--ink2:#3d4456;--ink3:#6b7590;--ink4:#9aa3b8;
+  --paper:#fafbfd;--paper2:#f3f5f9;--paper3:#ebeef5;
+  --sage:#4a7c6f;--sage-fade:rgba(74,124,111,.08);--sage-mid:rgba(74,124,111,.15);
+  --gold:#8b6914;--gold-fade:rgba(139,105,20,.08);
+  --slate:#3a4f6b;--slate-fade:rgba(58,79,107,.07);
+  --ruby:#7a2836;--ruby-fade:rgba(122,40,54,.07);
+  --border:#dde1ea;--border2:#c8cdd8;
+  --shadow:0 1px 3px rgba(26,31,46,.06),0 4px 16px rgba(26,31,46,.04);
+  --shadow-md:0 4px 12px rgba(26,31,46,.1),0 1px 3px rgba(26,31,46,.06);
+  --shadow-lg:0 20px 60px rgba(26,31,46,.12),0 4px 16px rgba(26,31,46,.06);
+  --r:10px;--r-sm:6px;--r-lg:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Outfit',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;overflow-x:hidden;}
+::selection{background:var(--sage-mid);color:var(--sage);}
+
+.shell{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:255px;min-width:255px;background:var(--ink);display:flex;flex-direction:column;overflow-y:auto;position:relative;}
+.sidebar::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(74,124,111,.12) 0%,transparent 40%);pointer-events:none;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:var(--shadow);}
+.content{flex:1;overflow-y:auto;padding:28px;}
+
+/* SIDEBAR */
+.sb-brand{padding:22px 18px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-brand-top{display:flex;align-items:center;gap:10px;margin-bottom:5px;}
+.sb-logo{width:30px;height:30px;background:linear-gradient(135deg,var(--sage),#2d5a4e);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-logo svg{width:14px;height:14px;color:#fff;}
+.sb-brand-name{font-family:'Crimson Pro',serif;font-size:14px;font-weight:600;color:#fff;letter-spacing:.2px;line-height:1.3;}
+.sb-brand-sub{font-size:9px;font-weight:500;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase;}
+.sb-sec-lbl{padding:16px 18px 5px;font-size:9px;font-weight:600;color:rgba(255,255,255,.22);letter-spacing:2.5px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 14px;margin:1px 8px;border-radius:7px;cursor:pointer;color:rgba(255,255,255,.48);font-size:12px;font-weight:500;transition:all .18s;user-select:none;}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.82);}
+.nav-item.active{background:rgba(74,124,111,.24);color:#7ec9b8;border:1px solid rgba(74,124,111,.28);}
+.nav-item svg{width:13px;height:13px;flex-shrink:0;opacity:.65;}
+.nav-item.active svg{opacity:1;color:#7ec9b8;}
+.nb{margin-left:auto;background:rgba(255,255,255,.1);color:rgba(255,255,255,.45);font-size:9px;font-weight:600;padding:1px 5px;border-radius:6px;}
+.nav-item.active .nb{background:rgba(74,124,111,.3);color:#7ec9b8;}
+.sb-projects{padding:6px 8px;flex:1;overflow-y:auto;}
+.proj-item{padding:8px 10px;border-radius:6px;cursor:pointer;border:1px solid transparent;transition:all .18s;margin-bottom:3px;}
+.proj-item:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.07);}
+.proj-item.active{background:rgba(74,124,111,.18);border-color:rgba(74,124,111,.28);}
+.proj-name{font-size:11px;font-weight:600;color:rgba(255,255,255,.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.proj-meta{font-size:9px;color:rgba(255,255,255,.28);margin-top:1px;}
+.sb-bottom{padding:12px;border-top:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;gap:5px;}
+.sb-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:8px;background:rgba(74,124,111,.18);border:1px solid rgba(74,124,111,.32);border-radius:7px;color:#7ec9b8;font-size:10px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .18s;}
+.sb-btn:hover{background:rgba(74,124,111,.32);}
+.sb-btn.danger{background:rgba(122,40,54,.13);border-color:rgba(122,40,54,.28);color:#e09098;}
+.sb-btn.danger:hover{background:rgba(122,40,54,.28);}
+
+/* TOPBAR */
+.topbar-title{font-size:13px;font-weight:600;color:var(--ink);}
+.topbar-sub{font-size:10px;color:var(--ink3);}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.t-btn{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;border:none;}
+.t-btn-ghost{background:var(--paper2);color:var(--ink2);border:1px solid var(--border);}
+.t-btn-ghost:hover{border-color:var(--border2);background:var(--paper3);}
+.t-btn-primary{background:var(--sage);color:#fff;}
+.t-btn-primary:hover{background:#3d6b5f;}
+.t-btn-gold{background:var(--gold);color:#fff;}
+.t-btn-gold:hover{background:#7a5c12;}
+.t-btn svg{width:12px;height:12px;}
+
+.section{display:none;}
+.section.active{display:block;}
+
+/* HOME */
+.home-hero{background:linear-gradient(135deg,var(--ink) 0%,#2d3a50 100%);border-radius:var(--r-lg);padding:28px 32px;margin-bottom:20px;position:relative;overflow:hidden;}
+.home-hero::before{content:'KP-HCIP';font-family:'Crimson Pro',serif;font-size:140px;font-weight:300;color:rgba(255,255,255,.025);position:absolute;right:-10px;top:-20px;line-height:1;pointer-events:none;}
+.hero-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(74,124,111,.22);border:1px solid rgba(74,124,111,.38);color:#7ec9b8;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:10px;}
+.hero-title{font-family:'Crimson Pro',serif;font-size:26px;font-weight:600;color:#fff;margin-bottom:5px;line-height:1.2;}
+.hero-sub{font-size:11px;color:rgba(255,255,255,.45);line-height:1.6;max-width:500px;}
+.hero-stats{display:flex;gap:22px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.07);}
+.hs-val{font-size:20px;font-weight:700;color:#fff;font-family:'JetBrains Mono',monospace;}
+.hs-lbl{font-size:9px;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
+.stat-card.c-sage::before{background:var(--sage);}
+.stat-card.c-gold::before{background:var(--gold);}
+.stat-card.c-slate::before{background:var(--slate);}
+.stat-card.c-ruby::before{background:var(--ruby);}
+.sc-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;font-size:13px;}
+.i-sage{background:var(--sage-fade);}
+.i-gold{background:var(--gold-fade);}
+.i-slate{background:var(--slate-fade);}
+.i-ruby{background:var(--ruby-fade);}
+.sc-val{font-size:22px;font-weight:700;color:var(--ink);font-family:'JetBrains Mono',monospace;line-height:1;}
+.sc-lbl{font-size:9px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
+.recent-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;}
+.panel{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.panel-title{font-size:11px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.7px;}
+.panel-link{font-size:10px;color:var(--sage);font-weight:600;cursor:pointer;}
+.report-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.report-row:last-child{border-bottom:none;}
+.rr-icon{width:32px;height:32px;background:var(--slate-fade);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;}
+.rr-name{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.rr-meta{font-size:10px;color:var(--ink3);}
+.rr-actions{margin-left:auto;display:flex;gap:5px;}
+.act-btn{padding:3px 9px;border-radius:5px;font-size:9px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--paper2);color:var(--ink3);font-family:'Outfit',sans-serif;transition:all .15s;}
+.act-btn:hover{border-color:var(--sage);color:var(--sage);}
+.act-btn.danger:hover{border-color:var(--ruby);color:var(--ruby);}
+
+/* EDITOR */
+.editor-layout{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start;}
+.form-card{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px;}
+.form-section-hdr{padding:14px 22px;background:var(--paper2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.fsh-num{width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.fsh-title{font-size:11px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.5px;}
+.fsh-sub{font-size:9px;color:var(--ink4);margin-left:auto;font-style:italic;}
+.form-body{padding:20px;}
+.form-grid{display:grid;gap:14px;}
+.fg-2{grid-template-columns:1fr 1fr;}
+.fg-3{grid-template-columns:1fr 1fr 1fr;}
+.fg-4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group.full{grid-column:1/-1;}
+.fg-label{font-size:9px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.7px;}
+.fg-label .req{color:var(--ruby);margin-left:2px;}
+.fg-input{padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:12px;font-family:'Outfit',sans-serif;color:var(--ink);background:#fff;transition:all .18s;outline:none;}
+.fg-input:focus{border-color:var(--sage);box-shadow:0 0 0 3px var(--sage-fade);}
+.fg-input::placeholder{color:var(--ink4);}
+.fg-select{padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:12px;font-family:'Outfit',sans-serif;color:var(--ink);background:#fff;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%236b7590' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;padding-right:28px;transition:all .18s;outline:none;}
+.fg-select:focus{border-color:var(--sage);box-shadow:0 0 0 3px var(--sage-fade);}
+.fg-textarea{padding:9px 11px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:12px;font-family:'Outfit',sans-serif;color:var(--ink);background:#fff;resize:vertical;min-height:80px;line-height:1.6;transition:all .18s;outline:none;width:100%;}
+.fg-textarea:focus{border-color:var(--sage);box-shadow:0 0 0 3px var(--sage-fade);}
+.fg-hint{font-size:9px;color:var(--ink4);margin-top:1px;}
+.divider{height:1px;background:var(--border);margin:16px 0;}
+
+/* TABLES (contractors & sites) */
+.tbl-wrap{border:1.5px solid var(--border);border-radius:var(--r-sm);overflow:hidden;overflow-x:auto;}
+.data-table{width:100%;border-collapse:collapse;font-size:11px;}
+.data-table th{background:var(--paper2);padding:7px 9px;text-align:left;font-size:8.5px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.data-table td{padding:7px 9px;border-bottom:1px solid var(--border);color:var(--ink);vertical-align:middle;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--paper2);}
+.data-table input,.data-table select{border:none;background:transparent;font-size:11px;font-family:'Outfit',sans-serif;color:var(--ink);outline:none;width:100%;min-width:60px;}
+.data-table input:focus,.data-table select:focus{background:var(--sage-fade);border-radius:3px;padding:1px 4px;margin:-1px -4px;}
+.add-row-btn{display:flex;align-items:center;gap:6px;padding:8px 12px;color:var(--sage);font-size:11px;font-weight:600;cursor:pointer;border:1.5px dashed var(--sage-mid);border-radius:var(--r-sm);background:var(--sage-fade);width:100%;justify-content:center;margin-top:8px;transition:all .18s;}
+.add-row-btn:hover{background:var(--sage-mid);}
+.del-btn{width:20px;height:20px;border-radius:4px;border:none;background:var(--ruby-fade);color:var(--ruby);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.del-btn:hover{background:var(--ruby);color:#fff;}
+.row-num{font-size:9px;color:var(--ink4);font-family:'JetBrains Mono',monospace;text-align:center;}
+
+/* PROGRESS */
+.prog-input-group{display:flex;align-items:center;gap:8px;}
+.prog-input-group input[type=range]{flex:1;height:4px;accent-color:var(--sage);cursor:pointer;}
+.prog-val{font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;min-width:42px;text-align:right;}
+
+/* SITE OBSERVATIONS (per site accordion) */
+.site-obs-block{border:1.5px solid var(--border);border-radius:var(--r-sm);margin-bottom:10px;overflow:hidden;}
+.site-obs-hdr{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--paper2);cursor:pointer;user-select:none;transition:background .15s;}
+.site-obs-hdr:hover{background:var(--paper3);}
+.site-obs-hdr-left{display:flex;align-items:center;gap:8px;flex:1;}
+.site-obs-num{width:20px;height:20px;border-radius:50%;background:var(--slate);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.site-obs-name{font-size:11px;font-weight:700;color:var(--ink);}
+.site-obs-pkg{font-size:9px;color:var(--ink3);background:var(--slate-fade);padding:1px 6px;border-radius:5px;border:1px solid rgba(58,79,107,.15);}
+.site-obs-chevron{font-size:10px;color:var(--ink3);transition:transform .2s;}
+.site-obs-chevron.open{transform:rotate(180deg);}
+.site-obs-body{padding:14px;display:none;}
+.site-obs-body.open{display:block;}
+
+/* PHOTO UPLOAD */
+.photo-zone{border:2px dashed var(--border2);border-radius:var(--r-sm);padding:20px;text-align:center;cursor:pointer;transition:all .18s;background:var(--paper2);}
+.photo-zone:hover,.photo-zone.drag-over{border-color:var(--sage);background:var(--sage-fade);}
+.photo-zone-icon{font-size:24px;margin-bottom:6px;}
+.photo-zone-text{font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:3px;}
+.photo-zone-hint{font-size:9px;color:var(--ink4);}
+.photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px;}
+.photo-thumb{position:relative;border-radius:7px;overflow:hidden;background:var(--paper3);border:1px solid var(--border);}
+.photo-thumb img{width:100%;height:auto;display:block;object-fit:contain;}
+.photo-thumb-overlay{position:absolute;inset:0;background:rgba(26,31,46,.6);opacity:0;transition:.18s;display:flex;align-items:center;justify-content:center;}
+.photo-thumb:hover .photo-thumb-overlay{opacity:1;}
+.pto-btn{padding:4px 8px;border-radius:4px;font-size:8px;font-weight:700;cursor:pointer;border:none;font-family:'Outfit',sans-serif;}
+.pto-btn.del{background:var(--ruby);color:#fff;}
+.photo-caption{padding:4px;background:var(--paper2);border-top:1px solid var(--border);}
+.photo-caption input{border:none;background:transparent;font-size:8px;font-family:'Outfit',sans-serif;color:var(--ink2);width:100%;outline:none;}
+
+/* VISITING TEAM */
+.team-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;margin-bottom:8px;}
+.team-row input{padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:12px;font-family:'Outfit',sans-serif;color:var(--ink);outline:none;transition:all .18s;}
+.team-row input:focus{border-color:var(--sage);}
+
+/* LIVE PREVIEW */
+.preview-panel{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);position:sticky;top:0;max-height:calc(100vh - 110px);overflow-y:auto;}
+.preview-hdr{padding:12px 16px;background:var(--ink);border-radius:var(--r-lg) var(--r-lg) 0 0;display:flex;align-items:center;justify-content:space-between;}
+.preview-hdr-title{font-size:9px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:1.5px;}
+.preview-body{padding:18px;}
+.rp-header{text-align:center;border-bottom:2px solid var(--border);padding-bottom:12px;margin-bottom:12px;}
+.rp-logo-area{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.rp-logo-box{width:44px;height:44px;background:var(--paper2);border:1px solid var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--ink3);text-align:center;line-height:1.3;}
+.rp-title-block{flex:1;margin:0 10px;}
+.rp-main-title{font-family:'Crimson Pro',serif;font-size:12px;font-weight:600;color:var(--ink);line-height:1.3;}
+.rp-sub-title{font-size:8px;color:var(--ink3);margin-top:1px;}
+.rp-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px;}
+.rp-info-item{padding:5px 7px;background:var(--paper2);border-radius:4px;border-left:2px solid var(--border2);}
+.rp-info-item.accent{border-left-color:var(--sage);}
+.rp-info-lbl{font-size:7px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px;}
+.rp-info-val{font-size:9px;font-weight:600;color:var(--ink);margin-top:1px;}
+.rp-progress-row{display:flex;gap:6px;margin-bottom:10px;}
+.rp-prog-box{flex:1;padding:7px;background:var(--paper2);border-radius:5px;text-align:center;border:1px solid var(--border);}
+.rp-prog-val{font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.rp-prog-lbl{font-size:7px;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px;margin-top:1px;}
+.rp-prog-bar{height:3px;background:var(--border);border-radius:2px;margin-top:5px;overflow:hidden;}
+.rp-prog-fill{height:100%;border-radius:2px;transition:width .4s ease;}
+.rp-section-title{font-size:8px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.8px;padding:5px 0;border-bottom:1px solid var(--border);margin-bottom:5px;}
+.rp-site-row{display:flex;gap:5px;align-items:center;padding:3px 5px;background:var(--paper2);border-radius:3px;margin-bottom:2px;}
+.rp-site-name{font-size:8px;font-weight:600;color:var(--ink);flex:1;}
+.rp-site-scope{font-size:7px;padding:1px 4px;border-radius:3px;background:var(--sage-fade);color:var(--sage);font-weight:700;}
+.rp-site-pct{font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.rp-obs-box{background:var(--gold-fade);border:1px solid rgba(139,105,20,.15);border-radius:5px;padding:7px;margin-bottom:5px;}
+.rp-obs-title{font-size:7px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.rp-obs-text{font-size:8px;color:var(--ink2);line-height:1.5;}
+.rp-issue-box{background:var(--ruby-fade);border:1px solid rgba(122,40,54,.15);border-radius:5px;padding:7px;margin-bottom:5px;}
+.rp-issue-title{font-size:7px;font-weight:700;color:var(--ruby);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.rp-rec-box{background:var(--sage-fade);border:1px solid var(--sage-mid);border-radius:5px;padding:7px;margin-bottom:5px;}
+.rp-rec-title{font-size:7px;font-weight:700;color:var(--sage);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.rp-footer{border-top:1px solid var(--border);padding-top:8px;margin-top:8px;display:flex;justify-content:space-between;}
+.rp-sign{text-align:center;flex:1;}
+.rp-sign-line{height:1px;background:var(--border);margin-bottom:3px;}
+.rp-sign-name{font-size:7px;font-weight:600;color:var(--ink2);}
+.rp-sign-role{font-size:6px;color:var(--ink4);}
+.rp-photo-placeholder{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px;}
+.rp-photo-box{min-height:50px;background:var(--paper2);border:1px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:16px;overflow:hidden;}
+.rp-photo-box img{width:100%;height:auto;max-height:80px;object-fit:contain;display:block;}
+
+/* COMPLIANCE STATUS */
+.compliance-badge{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:700;}
+.cb-ok{background:var(--sage-fade);color:var(--sage);border:1px solid rgba(74,124,111,.2);}
+.cb-bad{background:var(--ruby-fade);color:var(--ruby);border:1px solid rgba(122,40,54,.2);}
+.cb-warn{background:var(--gold-fade);color:var(--gold);border:1px solid rgba(139,105,20,.2);}
+.compliance-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 14px;background:var(--paper2);border-radius:var(--r-sm);border:1px solid var(--border);margin-top:12px;}
+.compliance-item{display:flex;flex-direction:column;gap:4px;}
+.compliance-lbl{font-size:9px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;}
+.compliance-val{font-size:12px;font-weight:700;}
+
+/* STATUS TAGS */
+.status-tag{display:inline-flex;padding:2px 7px;border-radius:7px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+.st-draft{background:var(--gold-fade);color:var(--gold);border:1px solid rgba(139,105,20,.18);}
+.st-done{background:var(--slate-fade);color:var(--slate);border:1px solid rgba(58,79,107,.18);}
+.st-active{background:var(--sage-fade);color:var(--sage);border:1px solid var(--sage-mid);}
+
+/* MISC */
+.empty-state{text-align:center;padding:30px 16px;color:var(--ink3);}
+.empty-state-icon{font-size:30px;margin-bottom:8px;}
+.empty-state-title{font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:3px;}
+.empty-state-sub{font-size:10px;color:var(--ink4);}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--ink);color:#fff;padding:9px 16px;border-radius:7px;font-size:11px;font-weight:600;box-shadow:var(--shadow-lg);z-index:9999;transform:translateY(70px);transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
+.toast.show{transform:translateY(0);}
+.toast.success{border-left:3px solid #7ec9b8;}
+.toast.error{border-left:3px solid #e09098;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+
+/* PRINT */
+@media print{
+  .shell,.topbar{display:none!important;}
+  .print-report{display:block!important;font-family:'Crimson Pro',serif;}
+  .pr-page{max-width:185mm;margin:0 auto;padding:12mm 0;}
+  .pr-header{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:12px;border-bottom:2.5px solid #1a1f2e;margin-bottom:16px;}
+  .pr-logo{width:55px;height:55px;background:#f3f5f9;border:1px solid #dde1ea;display:flex;align-items:center;justify-content:center;font-size:9px;color:#6b7590;border-radius:5px;text-align:center;line-height:1.4;}
+  .pr-title-area{flex:1;margin:0 14px;}
+  .pr-main-title{font-size:15px;font-weight:600;color:#1a1f2e;margin-bottom:2px;}
+  .pr-sub-title{font-size:9px;color:#6b7590;margin-bottom:4px;}
+  .pr-tags{display:flex;gap:5px;flex-wrap:wrap;}
+  .pr-tag{padding:2px 7px;border-radius:9px;font-size:8px;font-weight:700;background:#f3f5f9;color:#3d4456;border:1px solid #dde1ea;}
+  .pr-ref-box{text-align:right;font-size:9px;color:#9aa3b8;font-family:monospace;line-height:1.6;}
+  .pr-info-table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:10px;}
+  .pr-info-table td{padding:6px 9px;border:1px solid #ebeef5;}
+  .pr-info-table td:first-child{background:#f3f5f9;font-weight:700;color:#3d4456;width:34%;font-size:8.5px;text-transform:uppercase;letter-spacing:.4px;}
+  .pr-info-table td:last-child{color:#1a1f2e;}
+  .pr-ctor-table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:10px;}
+  .pr-ctor-table th{background:#2d3a50;color:#fff;padding:6px 9px;text-align:left;font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+  .pr-ctor-table td{padding:6px 9px;border-bottom:1px solid #ebeef5;color:#1a1f2e;}
+  .pr-ctor-table tr:nth-child(even) td{background:#fafbfd;}
+  .pr-prog-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+  .pr-prog-box{padding:10px;border:1px solid #ebeef5;border-radius:5px;text-align:center;background:#fafbfd;}
+  .pr-prog-val{font-size:20px;font-weight:700;color:#1a1f2e;font-family:monospace;}
+  .pr-prog-lbl{font-size:8px;color:#6b7590;text-transform:uppercase;letter-spacing:.7px;margin-top:2px;}
+  .pr-h2{font-size:11px;font-weight:700;color:#1a1f2e;text-transform:uppercase;letter-spacing:.8px;padding:7px 0;border-bottom:1px solid #dde1ea;margin-bottom:9px;margin-top:16px;}
+  .pr-sites-table{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:14px;}
+  .pr-sites-table th{background:#2d3a50;color:#fff;padding:6px 9px;text-align:left;font-size:8.5px;font-weight:700;text-transform:uppercase;}
+  .pr-sites-table td{padding:6px 9px;border-bottom:1px solid #ebeef5;color:#1a1f2e;}
+  .pr-sites-table tr:nth-child(even) td{background:#fafbfd;}
+  .pr-team-table{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:14px;}
+  .pr-team-table th{background:#f3f5f9;color:#3d4456;padding:6px 9px;text-align:left;font-size:8.5px;font-weight:700;text-transform:uppercase;border-bottom:1px solid #dde1ea;}
+  .pr-team-table td{padding:6px 9px;border-bottom:1px solid #ebeef5;color:#1a1f2e;}
+  .pr-box{padding:10px 13px;border-radius:5px;margin-bottom:12px;font-size:10px;line-height:1.7;}
+  .pr-box-obs{background:#fef9f0;border-left:4px solid #8b6914;}
+  .pr-box-issue{background:#fdf5f6;border-left:4px solid #7a2836;}
+  .pr-box-rec{background:#f0f7f5;border-left:4px solid #4a7c6f;}
+  .pr-box-remark{background:#f3f5f9;border-left:4px solid #3a4f6b;}
+  .pr-box-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px;}
+  .pr-site-obs-block{margin-bottom:16px;break-inside:avoid;}
+  .pr-site-obs-hdr{background:#f3f5f9;padding:8px 12px;border-radius:5px 5px 0 0;border:1px solid #dde1ea;border-bottom:none;}
+  .pr-site-obs-hdr-name{font-size:12px;font-weight:700;color:#1a1f2e;}
+  .pr-site-obs-hdr-pkg{font-size:9px;color:#6b7590;}
+  .pr-site-obs-body{border:1px solid #dde1ea;border-radius:0 0 5px 5px;padding:10px 12px;}
+  .pr-photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px;}
+  .pr-photo-item{border:1px solid #dde1ea;border-radius:6px;overflow:hidden;break-inside:avoid;}
+  .pr-photo-item img{width:100%;height:auto;display:block;object-fit:contain;background:#f9fafb;}
+  .pr-photo-caption{padding:5px 8px;background:#f3f5f9;font-size:9px;color:#6b7590;text-align:center;}
+  .pr-footer{margin-top:24px;padding-top:12px;border-top:2px solid #dde1ea;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;text-align:center;}
+  .pr-sign-line{height:1px;background:#dde1ea;margin-bottom:5px;margin-top:36px;}
+  .pr-sign-name{font-size:10px;font-weight:700;color:#1a1f2e;}
+  .pr-sign-role{font-size:8.5px;color:#6b7590;}
+  .pr-sign-date{font-size:8px;color:#9aa3b8;margin-top:2px;}
+}
+.print-report{display:none;}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="print-report" id="printReport"></div>
+
+<div class="shell">
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-brand-top">
+      <div class="sb-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <div><div class="sb-brand-name">KP-HCIP Education</div><div class="sb-brand-sub">Report System v2</div></div>
+    </div>
+  </div>
+  <div class="sb-sec-lbl">Navigation</div>
+  <div class="nav-item active" onclick="nav('home',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </div>
+  <div class="nav-item" onclick="nav('editor',this);newReport()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    New Report
+  </div>
+  <div class="sb-sec-lbl">Saved Reports</div>
+  <div class="sb-projects" id="sbProjects">
+    <div style="font-size:10px;color:rgba(255,255,255,.22);padding:10px 6px;">No reports saved yet.</div>
+  </div>
+  <div class="sb-bottom">
+    <button class="sb-btn" onclick="exportAll()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export All (JSON)
+    </button>
+    <button class="sb-btn danger" onclick="clearAll()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      Clear All Reports
+    </button>
+  </div>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topbarTitle">Site Visit Report Drafting System</div>
+      <div class="topbar-sub">KP-HCIP Education Component — Monitoring & Reporting</div>
+    </div>
+    <div class="topbar-right" id="topbarActions">
+      <button class="t-btn t-btn-primary" onclick="nav('editor',document.querySelectorAll('.nav-item')[1]);newReport()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Report
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ════ HOME ════ -->
+    <div class="section active" id="sec-home">
+      <div class="home-hero">
+        <div class="hero-badge">● Active Program</div>
+        <div class="hero-title">Site Visit Monitoring Reports<br>KP-HCIP Education Component</div>
+        <div class="hero-sub">Professional report drafting for school construction site monitoring. Save, edit, and print structured reports for World Bank program compliance.</div>
+        <div class="hero-stats">
+          <div><div class="hs-val" id="hsTotalReports">0</div><div class="hs-lbl">Reports</div></div>
+          <div><div class="hs-val">58</div><div class="hs-lbl">Packages</div></div>
+          <div><div class="hs-val">488</div><div class="hs-lbl">Schools</div></div>
+          <div><div class="hs-val">4</div><div class="hs-lbl">Districts</div></div>
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card c-sage"><div class="sc-icon i-sage">📋</div><div class="sc-val" id="scDraft">0</div><div class="sc-lbl">Draft Reports</div></div>
+        <div class="stat-card c-gold"><div class="sc-icon i-gold">✅</div><div class="sc-val" id="scFinal">0</div><div class="sc-lbl">Finalized</div></div>
+        <div class="stat-card c-slate"><div class="sc-icon i-slate">🏫</div><div class="sc-val" id="scSites">0</div><div class="sc-lbl">Sites Logged</div></div>
+        <div class="stat-card c-ruby"><div class="sc-icon i-ruby">⚠️</div><div class="sc-val" id="scIssues">0</div><div class="sc-lbl">Issues Flagged</div></div>
+      </div>
+      <div class="recent-grid">
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">Recent Reports</div><div class="panel-link" onclick="nav('editor',document.querySelectorAll('.nav-item')[1]);newReport()">+ New</div></div>
+          <div id="recentReports"><div class="empty-state"><div class="empty-state-icon">📄</div><div class="empty-state-title">No reports yet</div><div class="empty-state-sub">Create your first site visit report</div></div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">How to Use</div></div>
+          <div style="display:flex;flex-direction:column;gap:9px;">
+            <div style="padding:10px;background:var(--sage-fade);border-radius:7px;border:1px solid var(--sage-mid);font-size:11px;color:var(--ink2);line-height:1.7;">1. Click <b>New Report</b><br>2. Fill all 8 sections<br>3. Add site rows & upload photos<br>4. Observations auto-fill per site<br>5. <b>Save Project</b> to store<br>6. <b>Generate Report</b> to print/PDF</div>
+            <div style="padding:10px;background:var(--gold-fade);border-radius:7px;border:1px solid rgba(139,105,20,.14);font-size:10px;color:var(--ink2);line-height:1.6;"><b>Auto-saved in browser</b> — Edit any time by clicking from the sidebar.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ EDITOR ════ -->
+    <div class="section" id="sec-editor">
+      <div class="editor-layout">
+        <div>
+
+          <!-- SEC 1: Program Info -->
+          <div class="form-card">
+            <div class="form-section-hdr"><div class="fsh-num">1</div><div class="fsh-title">Program & Visit Information</div><div class="fsh-sub">Required</div></div>
+            <div class="form-body">
+              <div class="form-grid fg-2">
+                <div class="form-group"><label class="fg-label">Reference No.</label><input class="fg-input" id="f_refNo" placeholder="KPHCIP/SVR/PSH/2026/001" oninput="updatePreview()"/></div>
+                <div class="form-group"><label class="fg-label">Visit Date <span class="req">*</span></label><input class="fg-input" id="f_visitDate" type="date" oninput="updatePreview()"/></div>
+                <div class="form-group"><label class="fg-label">Report Title <span class="req">*</span></label><input class="fg-input" id="f_title" placeholder="Site Visit Monitoring Report" oninput="updatePreview()"/></div>
+                <div class="form-group"><label class="fg-label">Visit Type</label>
+                  <select class="fg-select" id="f_visitType" onchange="updatePreview()">
+                    <option>Regular Site Visit</option><option>Joint Inspection</option><option>Supervision Visit</option><option>Pre-Handover Inspection</option><option>Post-Construction Audit</option><option>Emergency Visit</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEC 2: Package & Contract Details -->
+          <div class="form-card">
+            <div class="form-section-hdr"><div class="fsh-num">2</div><div class="fsh-title">Package & Contract Details</div><div class="fsh-sub">Core data</div></div>
+            <div class="form-body">
+              <!-- CONTRACTOR TABLE (up to 20) -->
+              <div class="fg-label" style="margin-bottom:8px;">Contractor(s) & Package Numbers <span class="req">*</span> <span class="fg-hint">(max 20)</span></div>
+              <div class="tbl-wrap" style="margin-bottom:8px;">
+                <table class="data-table">
+                  <thead><tr><th>#</th><th>Contractor Name</th><th>Package No.</th><th>Phase</th><th>Contract Cost (PKR M)</th><th>Upto-date Payment (PKR M)</th><th></th></tr></thead>
+                  <tbody id="ctorTableBody"></tbody>
+                </table>
+              </div>
+              <div class="add-row-btn" id="ctorAddBtn" onclick="addCtorRow()">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Contractor / Package
+              </div>
+
+              <div class="divider"></div>
+
+              <!-- Basic fields -->
+              <div class="form-grid fg-3" style="margin-bottom:14px;">
+                <div class="form-group">
+                  <label class="fg-label">District <span class="req">*</span></label>
+                  <select class="fg-select" id="f_district" onchange="updatePreview()">
+                    <option value="">Select District</option>
+                    <option>Peshawar</option><option>Haripur</option><option>Nowshera</option><option>Swabi</option>
+                    <option>Bannu</option><option>D.I. Khan</option><option>Swat</option><option>Malakand</option>
+                    <option>Dir (Upper/Lower)</option><option>Chitral</option><option>Kohat</option><option>Karak</option>
+                    <option>Khyber</option><option>Abbottabad</option><option>Mansehra</option>
+                  </select>
+                </div>
+                <div class="form-group"><label class="fg-label">Consultant / Supervisor</label><input class="fg-input" id="f_consultant" placeholder="Consulting firm" oninput="updatePreview()"/></div>
+                <div class="form-group"><label class="fg-label">Contract Start Date</label><input class="fg-input" id="f_startDate" type="date" oninput="updatePreview()"/></div>
+                <div class="form-group"><label class="fg-label">Contract Completion Date</label><input class="fg-input" id="f_endDate" type="date" oninput="updatePreview()"/></div>
+                <div class="form-group"><label class="fg-label">Total Sites in Package</label><input class="fg-input" id="f_totalSites" type="number" placeholder="0" min="0" oninput="updatePreview()"/></div>
+                <div class="form-group"><label class="fg-label">Overall Package Status</label>
+                  <select class="fg-select" id="f_pkgStatus" onchange="updatePreview()">
+                    <option>On Track</option><option>Slightly Delayed</option><option>Significantly Behind</option>
+                    <option>Terminated</option><option>Completed</option><option>Handed Over</option><option>Suspended</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <!-- District Progress Status (renamed from Progress Status) -->
+              <div class="fg-label" style="margin-bottom:12px;">District Progress Status</div>
+              <div class="form-grid fg-2">
+                <div class="form-group">
+                  <label class="fg-label">Physical Progress (%)</label>
+                  <div class="prog-input-group">
+                    <input type="range" min="0" max="100" step="0.1" id="f_physRange" value="0" oninput="syncProg('phys',this.value)"/>
+                    <input class="fg-input" id="f_physInput" type="number" min="0" max="100" step="0.1" value="0" style="width:65px;" oninput="syncProg('physI',this.value)"/>
+                    <span class="prog-val" id="f_physVal" style="color:var(--sage)">0%</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="fg-label">Financial Progress (%)</label>
+                  <div class="prog-input-group">
+                    <input type="range" min="0" max="100" step="0.1" id="f_finRange" value="0" oninput="syncProg('fin',this.value)"/>
+                    <input class="fg-input" id="f_finInput" type="number" min="0" max="100" step="0.1" value="0" style="width:65px;" oninput="syncProg('finI',this.value)"/>
+                    <span class="prog-val" id="f_finVal" style="color:var(--slate)">0%</span>
+                  </div>
+                </div>
+                <div class="form-group"><label class="fg-label">Planned Progress (%)</label><input class="fg-input" id="f_plannedProg" type="number" min="0" max="100" placeholder="e.g. 58.3" oninput="updatePreview()"/></div>
+                <div class="form-group"><label class="fg-label">District-level Remarks</label><input class="fg-input" id="f_distRemark" placeholder="e.g. Overall district progress satisfactory" oninput="updatePreview()"/></div>
+              </div>
+
+              <div class="divider"></div>
+
+              <!-- Site Compliance Status -->
+              <div class="fg-label" style="margin-bottom:12px;">Site Compliance Status</div>
+              <div class="form-grid fg-2">
+                <div class="form-group">
+                  <label class="fg-label">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;color:var(--sage);"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    Material Tests <span class="req">*</span>
+                  </label>
+                  <select class="fg-select" id="f_materialTests" onchange="updatePreview()" style="font-weight:600;">
+                    <option value="">-- Select Status --</option>
+                    <option value="Conducted">✅ Conducted</option>
+                    <option value="Not Conducted">❌ Not Conducted</option>
+                    <option value="Partially Conducted">⚠️ Partially Conducted</option>
+                  </select>
+                  <span class="fg-hint">Lab/field tests for construction materials</span>
+                </div>
+                <div class="form-group">
+                  <label class="fg-label">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;color:var(--slate);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    Site Register <span class="req">*</span>
+                  </label>
+                  <select class="fg-select" id="f_siteRegister" onchange="updatePreview()" style="font-weight:600;">
+                    <option value="">-- Select Status --</option>
+                    <option value="Available">✅ Available</option>
+                    <option value="Not Available">❌ Not Available</option>
+                  </select>
+                  <span class="fg-hint">Physical site register / logbook at site</span>
+                </div>
+                <div class="form-group full">
+                  <label class="fg-label">Compliance Remarks</label>
+                  <input class="fg-input" id="f_complianceRemark" placeholder="e.g. Material tests conducted for concrete mix, site register updated — or note any deficiencies" oninput="updatePreview()"/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEC 2b: Environmental & Safety -->
+          <div class="form-card">
+            <div class="form-section-hdr">
+              <div class="fsh-num" style="background:linear-gradient(135deg,#2d6a2d,#1a4d1a);">🌿</div>
+              <div class="fsh-title">Environmental & Safety (E&S)</div>
+              <div class="fsh-sub">Compliance check</div>
+            </div>
+            <div class="form-body">
+              <div style="padding:8px 12px;background:rgba(45,106,45,.07);border-radius:6px;border:1px solid rgba(45,106,45,.18);font-size:10px;color:var(--ink2);margin-bottom:14px;line-height:1.6;">
+                <b>🌿 World Bank ESMP Requirement:</b> Confirm whether Environmental & Social Management Plan protocols were followed during this site visit.
+              </div>
+              <div class="form-grid fg-2">
+                <div class="form-group">
+                  <label class="fg-label">E&S Protocols Status <span class="req">*</span></label>
+                  <select class="fg-select" id="f_esProtocols" onchange="updateESStyle();updatePreview()" style="font-weight:600;font-size:13px;">
+                    <option value="">-- Select Status --</option>
+                    <option value="Followed">✅ E&S Protocols Followed</option>
+                    <option value="Not Followed">❌ E&S Protocols Not Followed</option>
+                    <option value="Partially Followed">⚠️ E&S Protocols Partially Followed</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="fg-label">ESMP / Environmental Plan</label>
+                  <select class="fg-select" id="f_esmpStatus" onchange="updatePreview()">
+                    <option value="">-- Select --</option>
+                    <option value="Available at Site">✅ Available at Site</option>
+                    <option value="Not Available">❌ Not Available at Site</option>
+                    <option value="Partially Implemented">⚠️ Partially Implemented</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="fg-label">Safety Measures on Site</label>
+                  <select class="fg-select" id="f_safetyMeasures" onchange="updatePreview()">
+                    <option value="">-- Select --</option>
+                    <option value="Adequate">✅ Adequate — PPE & signage in place</option>
+                    <option value="Inadequate">❌ Inadequate — safety issues found</option>
+                    <option value="Partial">⚠️ Partial — improvement needed</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="fg-label">Waste / Debris Management</label>
+                  <select class="fg-select" id="f_wasteManagement" onchange="updatePreview()">
+                    <option value="">-- Select --</option>
+                    <option value="Properly Managed">✅ Properly Managed</option>
+                    <option value="Not Managed">❌ Not Managed</option>
+                    <option value="Partially Managed">⚠️ Partially Managed</option>
+                  </select>
+                </div>
+                <div class="form-group full">
+                  <label class="fg-label">E&S Observations & Remarks</label>
+                  <textarea class="fg-textarea" id="f_esRemarks" rows="3" placeholder="Describe any environmental or safety issues observed — e.g. PPE not worn, waste dumped near water source, no signage, exposed excavation without fencing, etc." oninput="updatePreview()"></textarea>
+                </div>
+              </div>
+              <!-- Visual E&S Status Badge -->
+              <div id="esBadgeWrap" style="margin-top:12px;display:none;">
+                <div id="esBadge" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:8px;font-size:12px;font-weight:700;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEC 3: Reporting Officer -->
+          <div class="form-card">
+            <div class="form-section-hdr"><div class="fsh-num">3</div><div class="fsh-title">Reporting Officer</div><div class="fsh-sub">Person preparing this report</div></div>
+            <div class="form-body">
+              <div class="form-grid fg-2">
+                <div class="form-group"><label class="fg-label">Reporting Officer Name <span class="req">*</span></label><input class="fg-input" id="f_repOfficer" placeholder="Full name" oninput="updatePreview()"/></div>
+                <div class="form-group"><label class="fg-label">Designation <span class="req">*</span></label><input class="fg-input" id="f_repDesig" placeholder="e.g. Site Engineer / PMU Officer" oninput="updatePreview()"/></div>
+                <div class="form-group"><label class="fg-label">Organization / Department</label><input class="fg-input" id="f_repOrg" placeholder="e.g. KPHCIP PMU / PIU" oninput="updatePreview()"/></div>
+                <div class="form-group"><label class="fg-label">Contact / Email</label><input class="fg-input" id="f_repContact" placeholder="Phone or email" oninput="updatePreview()"/></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEC 4: Visiting Team -->
+          <div class="form-card">
+            <div class="form-section-hdr"><div class="fsh-num">4</div><div class="fsh-title">Visiting Team</div><div class="fsh-sub">All members present during visit</div></div>
+            <div class="form-body">
+              <div id="teamWrap"></div>
+              <div class="add-row-btn" onclick="addTeamMember()">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Team Member
+              </div>
+            </div>
+          </div>
+
+          <!-- SEC 5: Sites Visited -->
+          <div class="form-card">
+            <div class="form-section-hdr"><div class="fsh-num">5</div><div class="fsh-title">Sites Visited</div><div class="fsh-sub">Auto-fills Field Observations below</div></div>
+            <div class="form-body">
+              <div class="tbl-wrap">
+                <table class="data-table">
+                  <thead><tr>
+                    <th>#</th>
+                    <th>Site / School Name</th>
+                    <th>EMIS Code</th>
+                    <th>Package No.</th>
+                    <th>Lat (Coordinates)</th>
+                    <th>Long (Coordinates)</th>
+                    <th>Scope <span style="font-weight:400;font-size:8px;opacity:.7;">(e.g. 2 ACRs, 1 P2M)</span></th>
+                    <th>Physical %</th>
+                    <th>Remarks</th>
+                    <th></th>
+                  </tr></thead>
+                  <tbody id="sitesTableBody"></tbody>
+                </table>
+              </div>
+              <div class="add-row-btn" onclick="addSiteRow()">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Site / School
+              </div>
+            </div>
+          </div>
+
+          <!-- SEC 6: Field Observations (per site, auto-populated) -->
+          <div class="form-card">
+            <div class="form-section-hdr"><div class="fsh-num">6</div><div class="fsh-title">Field Observations & Recommendations</div><div class="fsh-sub">Auto-generated per site from Sites Visited</div></div>
+            <div class="form-body">
+              <div style="padding:8px 12px;background:var(--sage-fade);border-radius:6px;border:1px solid var(--sage-mid);font-size:10px;color:var(--ink2);margin-bottom:14px;">
+                <b>ℹ</b> Site names and package numbers are automatically copied from the <b>Sites Visited</b> section above. Add your field observations and recommendations for each site below.
+              </div>
+              <div id="siteObsWrap">
+                <div class="empty-state" style="padding:24px;"><div class="empty-state-icon">🏫</div><div class="empty-state-title">No sites added yet</div><div class="empty-state-sub">Add sites in Section 5 to generate observation panels here</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEC 7: Issues / Other Remarks (LAST) -->
+          <div class="form-card">
+            <div class="form-section-hdr"><div class="fsh-num">7</div><div class="fsh-title">Issues / Other Remarks</div><div class="fsh-sub">Program-level flags & general remarks</div></div>
+            <div class="form-body">
+              <div class="form-grid" style="gap:14px;">
+                <div class="form-group full">
+                  <label class="fg-label">Issues / Problems Identified <span style="color:var(--ruby)">⚠</span></label>
+                  <textarea class="fg-textarea" id="f_issues" rows="3" placeholder="List any program-level issues, non-conformities, or concerns (one per line)" oninput="updatePreview()"></textarea>
+                </div>
+                <div class="form-group full">
+                  <label class="fg-label">General Remarks</label>
+                  <textarea class="fg-textarea" id="f_remarks" rows="3" placeholder="Any additional remarks, action items, follow-up required, or overall summary" oninput="updatePreview()"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEC 8: Signatories -->
+          <div class="form-card">
+            <div class="form-section-hdr"><div class="fsh-num">8</div><div class="fsh-title">Signatories & Authorization</div><div class="fsh-sub">Report reviewed & approved by</div></div>
+            <div class="form-body">
+              <div class="form-grid fg-3">
+                <div class="form-group">
+                  <label class="fg-label">Prepared By</label>
+                  <input class="fg-input" id="f_preparedBy" placeholder="Name" oninput="updatePreview()"/>
+                  <input class="fg-input" id="f_preparedRole" placeholder="Designation" style="margin-top:6px;" oninput="updatePreview()"/>
+                </div>
+                <div class="form-group">
+                  <label class="fg-label">Reviewed By</label>
+                  <input class="fg-input" id="f_reviewedBy" placeholder="Name" oninput="updatePreview()"/>
+                  <input class="fg-input" id="f_reviewedRole" placeholder="Designation" style="margin-top:6px;" oninput="updatePreview()"/>
+                </div>
+                <div class="form-group">
+                  <label class="fg-label">Approved By</label>
+                  <input class="fg-input" id="f_approvedBy" placeholder="Name" oninput="updatePreview()"/>
+                  <input class="fg-input" id="f_approvedRole" placeholder="Designation" style="margin-top:6px;" oninput="updatePreview()"/>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="form-grid fg-2">
+                <div class="form-group"><label class="fg-label">Report Status</label>
+                  <select class="fg-select" id="f_reportStatus"><option value="draft">Draft</option><option value="final">Final</option><option value="submitted">Submitted</option></select>
+                </div>
+                <div class="form-group"><label class="fg-label">Submission Date</label><input class="fg-input" id="f_submissionDate" type="date"/></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTION BUTTONS -->
+          <div style="display:flex;gap:10px;padding:4px 0 24px;">
+            <button class="t-btn t-btn-primary" onclick="saveProject()" style="flex:1;padding:11px;font-size:13px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save Project
+            </button>
+            <button class="t-btn t-btn-gold" onclick="generateReport()" style="flex:1;padding:11px;font-size:13px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Generate / Print Report
+            </button>
+            <button class="t-btn t-btn-ghost" onclick="clearForm()" style="padding:11px 16px;font-size:13px;">Reset</button>
+          </div>
+
+        </div><!-- end left col -->
+
+        <!-- RIGHT: LIVE PREVIEW -->
+        <div class="preview-panel">
+          <div class="preview-hdr">
+            <span class="preview-hdr-title">📄 Live Preview</span>
+            <span style="font-size:8px;color:rgba(255,255,255,.3);">Updates as you type</span>
+          </div>
+          <div class="preview-body" id="livePreview">
+            <div style="text-align:center;padding:28px 10px;color:var(--ink4);"><div style="font-size:26px;margin-bottom:7px;">📋</div><div style="font-size:10px;">Fill in the form to see<br>a live report preview</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- end editor -->
+
+  </div><!-- end content -->
+</div><!-- end main -->
+</div><!-- end shell -->
+
+<script>
+// ═══ STATE ═══════════════════════════════════════════════════════════════════
+let projects = JSON.parse(localStorage.getItem('kphcip_v2_reports')||'[]');
+let currentId = null;
+let ctorRows = [];   // [{name,pkg,phase,cost,payment}]
+let siteRows = [];   // [{name,emis,pkgNo,lat,lng,scope,physical,remarks}]
+let teamMembers = []; // [{name,designation}]
+let siteObs = {};    // {idx: {obs,rec,photos}}
+
+// ═══ NAVIGATION ══════════════════════════════════════════════════════════════
+function nav(id,el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='home') refreshHome();
+}
+
+// ═══ TOAST ═══════════════════════════════════════════════════════════════════
+function toast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ═══ HOME ════════════════════════════════════════════════════════════════════
+function refreshHome(){
+  document.getElementById('hsTotalReports').textContent=projects.length;
+  document.getElementById('scDraft').textContent=projects.filter(p=>p.status==='draft').length;
+  document.getElementById('scFinal').textContent=projects.filter(p=>p.status==='final'||p.status==='submitted').length;
+  document.getElementById('scSites').textContent=projects.reduce((s,p)=>s+(p.sites||[]).length,0);
+  document.getElementById('scIssues').textContent=projects.filter(p=>p.issues&&p.issues.trim()).length;
+
+  const wrap=document.getElementById('recentReports');
+  if(!projects.length){wrap.innerHTML='<div class="empty-state"><div class="empty-state-icon">📄</div><div class="empty-state-title">No reports yet</div><div class="empty-state-sub">Create your first site visit report</div></div>';return;}
+  wrap.innerHTML=[...projects].reverse().map(p=>`
+    <div class="report-row">
+      <div class="rr-icon">📋</div>
+      <div><div class="rr-name">${p.title||'Untitled'}</div>
+      <div class="rr-meta">${p.district||'—'} · ${p.visitDate||'—'} <span class="status-tag ${p.status==='draft'?'st-draft':p.status==='final'?'st-done':'st-active'}">${p.status||'draft'}</span></div></div>
+      <div class="rr-actions">
+        <button class="act-btn" onclick="loadProject('${p.id}')">Edit</button>
+        <button class="act-btn danger" onclick="deleteProject('${p.id}')">Del</button>
+      </div>
+    </div>`).join('');
+
+  const sb=document.getElementById('sbProjects');
+  sb.innerHTML=projects.length?projects.map(p=>`
+    <div class="proj-item ${currentId===p.id?'active':''}" onclick="loadProject('${p.id}')">
+      <div class="proj-name">${p.title||'Untitled'}</div>
+      <div class="proj-meta">${p.district||'—'} · ${p.visitDate||'—'}</div>
+    </div>`).join(''):'<div style="font-size:10px;color:rgba(255,255,255,.22);padding:10px 6px;">No reports saved yet.</div>';
+}
+
+// ═══ NEW REPORT ═══════════════════════════════════════════════════════════════
+function newReport(){
+  currentId=null; ctorRows=[]; siteRows=[]; teamMembers=[]; siteObs={};
+  clearForm();
+  renderCtorTable(); renderSitesTable(); renderTeam(); renderSiteObsBlocks();
+  updatePreview();
+  document.getElementById('f_visitDate').value=new Date().toISOString().split('T')[0];
+  setTopbarEdit(true);
+}
+
+function setTopbarEdit(on){
+  document.getElementById('topbarActions').innerHTML=on?`
+    <button class="t-btn t-btn-ghost" onclick="saveProject()">💾 Save</button>
+    <button class="t-btn t-btn-gold" onclick="generateReport()">🖨 Print</button>
+    <button class="t-btn t-btn-ghost" onclick="nav('home',document.querySelector('.nav-item'));refreshHome()">← Home</button>`
+    :`<button class="t-btn t-btn-primary" onclick="nav('editor',document.querySelectorAll('.nav-item')[1]);newReport()">+ New Report</button>`;
+}
+
+// ═══ CLEAR FORM ═══════════════════════════════════════════════════════════════
+function clearForm(){
+  ['f_refNo','f_visitDate','f_title','f_consultant','f_startDate','f_endDate','f_totalSites',
+   'f_distRemark','f_plannedProg','f_physInput','f_finInput','f_complianceRemark',
+   'f_repOfficer','f_repDesig','f_repOrg','f_repContact',
+   'f_issues','f_remarks',
+   'f_preparedBy','f_preparedRole','f_reviewedBy','f_reviewedRole',
+   'f_approvedBy','f_approvedRole','f_submissionDate'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  ['f_physRange','f_finRange'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=0;});
+  ['f_physVal','f_finVal'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='0%';});
+  const selReset=['f_materialTests','f_siteRegister','f_esProtocols','f_esmpStatus','f_safetyMeasures','f_wasteManagement'];
+  selReset.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  sv('f_esRemarks','');
+  const esEl=document.getElementById('esBadgeWrap');if(esEl)esEl.style.display='none';
+}
+
+// ═══ CONTRACTORS TABLE ════════════════════════════════════════════════════════
+function addCtorRow(){
+  if(ctorRows.length>=20){toast('Maximum 20 contractors','error');return;}
+  ctorRows.push({name:'',pkg:'',phase:'Phase-II (37-Packages)',cost:'',payment:''});
+  renderCtorTable(); updatePreview();
+}
+
+function renderCtorTable(){
+  const tb=document.getElementById('ctorTableBody');
+  document.getElementById('ctorAddBtn').style.display=ctorRows.length>=20?'none':'flex';
+  if(!ctorRows.length){
+    tb.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--ink4);padding:16px;font-size:11px;">No contractors added — click button below</td></tr>`;
+    return;
+  }
+  tb.innerHTML=ctorRows.map((r,i)=>`
+    <tr>
+      <td class="row-num">${i+1}</td>
+      <td><input value="${esc(r.name)}" placeholder="M/S Contractor Name" oninput="ctorRows[${i}].name=this.value;updatePreview()"/></td>
+      <td><input value="${esc(r.pkg)}" placeholder="Pkg-01" style="width:70px;" oninput="ctorRows[${i}].pkg=this.value;updatePreview()"/></td>
+      <td><select onchange="ctorRows[${i}].phase=this.value;updatePreview()" style="font-size:10px;border:none;background:transparent;font-family:'Outfit',sans-serif;cursor:pointer;outline:none;width:130px;">
+        <option ${r.phase==='Phase-I (06-Packages)'?'selected':''}>Phase-I (06-Packages)</option>
+        <option ${r.phase==='Phase-I (05-Packages)'?'selected':''}>Phase-I (05-Packages)</option>
+        <option ${r.phase==='Phase-II (37-Packages)'?'selected':''}>Phase-II (37-Packages)</option>
+        <option ${r.phase==='Rehab Works'?'selected':''}>Rehab Works</option>
+        <option ${r.phase==='Ten Packages'?'selected':''}>Ten Packages</option>
+      </select></td>
+      <td><input type="number" value="${r.cost}" placeholder="0.0" style="width:70px;" oninput="ctorRows[${i}].cost=this.value;updatePreview()"/></td>
+      <td><input type="number" value="${r.payment}" placeholder="0.0" style="width:70px;" oninput="ctorRows[${i}].payment=this.value;updatePreview()"/></td>
+      <td><button class="del-btn" onclick="ctorRows.splice(${i},1);renderCtorTable();updatePreview()">×</button></td>
+    </tr>`).join('');
+}
+
+// ═══ SITES TABLE ══════════════════════════════════════════════════════════════
+function addSiteRow(){
+  siteRows.push({name:'',emis:'',pkgNo:'',lat:'',lng:'',scope:'',physical:0,remarks:''});
+  renderSitesTable(); renderSiteObsBlocks(); updatePreview();
+}
+
+function renderSitesTable(){
+  const tb=document.getElementById('sitesTableBody');
+  if(!siteRows.length){
+    tb.innerHTML=`<tr><td colspan="10" style="text-align:center;color:var(--ink4);padding:18px;font-size:11px;">No sites added yet — click button below</td></tr>`;
+    return;
+  }
+  tb.innerHTML=siteRows.map((r,i)=>`
+    <tr>
+      <td class="row-num">${i+1}</td>
+      <td><input value="${esc(r.name)}" placeholder="School / site name" style="min-width:130px;" oninput="siteRows[${i}].name=this.value;renderSiteObsBlocks();updatePreview()"/></td>
+      <td><input value="${esc(r.emis)}" placeholder="EMIS" style="width:65px;" oninput="siteRows[${i}].emis=this.value"/></td>
+      <td><input value="${esc(r.pkgNo)}" placeholder="Pkg-01" style="width:60px;" oninput="siteRows[${i}].pkgNo=this.value;renderSiteObsBlocks();updatePreview()"/></td>
+      <td><input value="${esc(r.lat)}" placeholder="33.9820" style="width:80px;" oninput="siteRows[${i}].lat=this.value"/></td>
+      <td><input value="${esc(r.lng)}" placeholder="71.4598" style="width:80px;" oninput="siteRows[${i}].lng=this.value"/></td>
+      <td><input value="${esc(r.scope)}" placeholder="e.g. 2 ACRs, 01 P2M, 01 M2H" title="Type your scope manually e.g. 2 ACRs, 01 P2M, 01 M2H" style="min-width:145px;font-size:11px;font-weight:600;color:var(--ink);outline:none;font-family:'Outfit',sans-serif;border:none;border-bottom:1.5px dashed var(--sage2);background:rgba(61,107,95,.04);border-radius:4px 4px 0 0;padding:3px 6px;width:100%;" oninput="siteRows[${i}].scope=this.value;updatePreview()"/></td>
+      <td><input type="number" value="${r.physical}" min="0" max="100" step="0.1" style="width:55px;" oninput="siteRows[${i}].physical=+this.value;updatePreview()"/></td>
+      <td><input value="${esc(r.remarks)}" placeholder="Brief remark" style="min-width:100px;" oninput="siteRows[${i}].remarks=this.value"/></td>
+      <td><button class="del-btn" onclick="deleteSiteRow(${i})">×</button></td>
+    </tr>`).join('');
+}
+
+function deleteSiteRow(i){
+  // Remove obs data for this site and re-index
+  const newObs={};
+  siteRows.forEach((_,j)=>{if(j<i)newObs[j]=siteObs[j]||{obs:'',rec:'',photos:[]};else if(j>i)newObs[j-1]=siteObs[j]||{obs:'',rec:'',photos:[]};});
+  siteObs=newObs;
+  siteRows.splice(i,1);
+  renderSitesTable(); renderSiteObsBlocks(); updatePreview();
+}
+
+// ═══ VISITING TEAM ════════════════════════════════════════════════════════════
+function addTeamMember(){
+  teamMembers.push({name:'',designation:''});
+  renderTeam(); updatePreview();
+}
+
+function renderTeam(){
+  const wrap=document.getElementById('teamWrap');
+  if(!teamMembers.length){wrap.innerHTML='<div style="font-size:11px;color:var(--ink4);padding:8px 0;">No team members added yet.</div>';return;}
+  wrap.innerHTML=teamMembers.map((m,i)=>`
+    <div class="team-row">
+      <input value="${esc(m.name)}" placeholder="Team member name" oninput="teamMembers[${i}].name=this.value;updatePreview()"/>
+      <input value="${esc(m.designation)}" placeholder="Designation / Role" oninput="teamMembers[${i}].designation=this.value;updatePreview()"/>
+      <button class="del-btn" onclick="teamMembers.splice(${i},1);renderTeam();updatePreview()">×</button>
+    </div>`).join('');
+}
+
+// ═══ SITE OBSERVATIONS (auto-generated per site) ════════════════════════════
+function renderSiteObsBlocks(){
+  const wrap=document.getElementById('siteObsWrap');
+  if(!siteRows.length){
+    wrap.innerHTML='<div class="empty-state" style="padding:24px;"><div class="empty-state-icon">🏫</div><div class="empty-state-title">No sites added yet</div><div class="empty-state-sub">Add sites in Section 5 to generate observation panels here</div></div>';
+    return;
+  }
+  // Save current textarea values before re-render
+  siteRows.forEach((_,i)=>{
+    const obsEl=document.getElementById('obs_obs_'+i);
+    const recEl=document.getElementById('obs_rec_'+i);
+    if(obsEl||recEl){
+      if(!siteObs[i])siteObs[i]={obs:'',rec:'',photos:[]};
+      if(obsEl)siteObs[i].obs=obsEl.value;
+      if(recEl)siteObs[i].rec=recEl.value;
+    }
+  });
+
+  wrap.innerHTML=siteRows.map((s,i)=>{
+    const obs=siteObs[i]||{obs:'',rec:'',photos:[]};
+    const phtHtml=(obs.photos||[]).map((p,pi)=>`
+      <div class="photo-thumb">
+        <img src="${p.src}" alt="photo"/>
+        <div class="photo-thumb-overlay"><button class="pto-btn del" onclick="deleteSitePhoto(${i},${pi})">Del</button></div>
+        <div class="photo-caption"><input placeholder="Caption…" value="${esc(p.caption||'')}" oninput="siteObs[${i}].photos[${pi}].caption=this.value"/></div>
+      </div>`).join('');
+
+    return `<div class="site-obs-block">
+      <div class="site-obs-hdr" onclick="toggleObs(${i})">
+        <div class="site-obs-hdr-left">
+          <div class="site-obs-num">${i+1}</div>
+          <div class="site-obs-name">${s.name||'Site '+( i+1)}</div>
+          <span class="site-obs-pkg">${s.pkgNo?'Pkg: '+s.pkgNo:''}</span>
+          <span style="font-size:8px;color:var(--ink4);margin-left:4px;">${s.scope} · ${s.physical}%</span>
+        </div>
+        <span class="site-obs-chevron" id="chev_${i}">▼</span>
+      </div>
+      <div class="site-obs-body" id="obsBody_${i}">
+        <div style="display:grid;gap:12px;">
+          <div style="padding:8px 12px;background:var(--slate-fade);border-radius:6px;border:1px solid rgba(58,79,107,.15);font-size:10px;color:var(--ink2);">
+            <b>Site:</b> ${s.name||'—'} &nbsp;|&nbsp; <b>Package:</b> ${s.pkgNo||'—'} &nbsp;|&nbsp; <b>Scope:</b> ${s.scope} &nbsp;|&nbsp; <b>Physical:</b> ${s.physical}% &nbsp;|&nbsp; <b>Coord:</b> ${s.lat||'—'}, ${s.lng||'—'}
+          </div>
+          <div class="form-group">
+            <label class="fg-label">Field Observations / Findings</label>
+            <textarea class="fg-textarea" id="obs_obs_${i}" rows="4" placeholder="Describe site conditions, construction status, quality observations, milestone completion, workers on site, materials, etc." oninput="if(!siteObs[${i}])siteObs[${i}]={obs:'',rec:'',photos:[]};siteObs[${i}].obs=this.value;updatePreview()">${esc2(obs.obs)}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="fg-label">Recommendations for this site</label>
+            <textarea class="fg-textarea" id="obs_rec_${i}" rows="3" placeholder="Specific recommendations for this school/site — remedial works, quality improvements, schedule actions…" oninput="if(!siteObs[${i}])siteObs[${i}]={obs:'',rec:'',photos:[]};siteObs[${i}].rec=this.value;updatePreview()">${esc2(obs.rec)}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="fg-label">Pictorial Evidence for this site</label>
+            <div class="photo-zone" onclick="document.getElementById('photoInput_${i}').click()" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event,${i})">
+              <div class="photo-zone-icon">📷</div>
+              <div class="photo-zone-text">Click or drag photos</div>
+              <div class="photo-zone-hint">JPG / PNG · Multiple allowed</div>
+            </div>
+            <input type="file" id="photoInput_${i}" multiple accept="image/*" style="display:none" onchange="handlePhoto(event,${i})"/>
+            <div class="photo-grid" id="photoGrid_${i}">${phtHtml}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleObs(i){
+  const body=document.getElementById('obsBody_'+i);
+  const chev=document.getElementById('chev_'+i);
+  body.classList.toggle('open');
+  if(chev) chev.classList.toggle('open');
+}
+
+function deleteSitePhoto(siteIdx,photoIdx){
+  if(!siteObs[siteIdx]||!siteObs[siteIdx].photos) return;
+  siteObs[siteIdx].photos.splice(photoIdx,1);
+  renderSiteObsBlocks(); updatePreview();
+}
+
+function handlePhoto(e,siteIdx){
+  if(!siteObs[siteIdx]) siteObs[siteIdx]={obs:'',rec:'',photos:[]};
+  [...e.target.files].forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{siteObs[siteIdx].photos.push({src:ev.target.result,caption:'',name:file.name});renderSiteObsBlocks();updatePreview();};
+    reader.readAsDataURL(file);
+  });
+  e.target.value='';
+}
+
+function handleDrop(e,siteIdx){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if(!siteObs[siteIdx]) siteObs[siteIdx]={obs:'',rec:'',photos:[]};
+  [...e.dataTransfer.files].filter(f=>f.type.startsWith('image/')).forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{siteObs[siteIdx].photos.push({src:ev.target.result,caption:'',name:file.name});renderSiteObsBlocks();updatePreview();};
+    reader.readAsDataURL(file);
+  });
+}
+
+// ═══ PROGRESS SYNC ════════════════════════════════════════════════════════════
+function syncProg(type,val){
+  const v=parseFloat(val)||0;
+  if(type==='phys'||type==='physI'){
+    document.getElementById('f_physRange').value=v;
+    document.getElementById('f_physInput').value=v;
+    document.getElementById('f_physVal').textContent=v.toFixed(1)+'%';
+    document.getElementById('f_physVal').style.color=v>=75?'var(--sage)':v>=45?'var(--gold)':'var(--ruby)';
+  } else {
+    document.getElementById('f_finRange').value=v;
+    document.getElementById('f_finInput').value=v;
+    document.getElementById('f_finVal').textContent=v.toFixed(1)+'%';
+    document.getElementById('f_finVal').style.color='var(--slate)';
+  }
+  updatePreview();
+}
+
+// ═══ HELPERS ══════════════════════════════════════════════════════════════════
+function v(id){return (document.getElementById(id)||{}).value||'';}
+function esc(s){return (s||'').replace(/"/g,'&quot;');}
+function esc2(s){return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function pctColor(p){return p>=75?'#4a7c6f':p>=45?'#8b6914':'#7a2836';}
+
+// ═══ LIVE PREVIEW ═════════════════════════════════════════════════════════════
+function updatePreview(){
+  const phys=parseFloat(v('f_physInput'))||0;
+  const fin=parseFloat(v('f_finInput'))||0;
+  const d=v('f_district');
+  const preview=document.getElementById('livePreview');
+
+  if(!d&&!ctorRows.length&&!siteRows.length){
+    preview.innerHTML='<div style="text-align:center;padding:28px 10px;color:var(--ink4);"><div style="font-size:26px;margin-bottom:7px;">📋</div><div style="font-size:10px;">Fill in the form to see a live preview</div></div>';
+    return;
+  }
+
+  const ctorSummary=ctorRows.length?ctorRows.map(c=>`<b>${c.name||'—'}</b> (${c.pkg||'—'})`).join(', '):'—';
+  const sitesHtml=siteRows.slice(0,5).map(s=>`
+    <div class="rp-site-row">
+      <div class="rp-site-name">${s.name||'—'} <span style="font-size:7px;color:var(--ink4);">${s.pkgNo?'['+s.pkgNo+']':''}</span></div>
+      <span class="rp-site-scope">${s.scope}</span>
+      <div class="rp-site-pct" style="color:${pctColor(s.physical)}">${s.physical}%</div>
+    </div>`).join('');
+  const extraSites=siteRows.length>5?`<div style="font-size:7px;color:var(--ink4);text-align:center;padding:2px;">+${siteRows.length-5} more</div>`:'';
+
+  // Collect a photo from first site for preview
+  const firstSiteWithPhoto=Object.values(siteObs).find(o=>o&&o.photos&&o.photos.length);
+  const photosPreviewHtml=firstSiteWithPhoto?firstSiteWithPhoto.photos.slice(0,2).map(p=>`<div class="rp-photo-box"><img src="${p.src}"/></div>`).join(''):'';
+
+  preview.innerHTML=`
+    <div class="rp-header">
+      <div class="rp-logo-area">
+        <div class="rp-logo-box">Govt<br>KPK</div>
+        <div class="rp-title-block">
+          <div class="rp-main-title">${v('f_title')||'Site Visit Monitoring Report'}</div>
+          <div class="rp-sub-title">KP-HCIP Education · ${d||'District'} · ${v('f_visitDate')||'—'}</div>
+        </div>
+        <div class="rp-logo-box">World<br>Bank</div>
+      </div>
+      <div style="font-size:7px;color:var(--ink4);text-align:center;margin-top:4px;">Ref: ${v('f_refNo')||'—'} | ${v('f_visitType')||'Site Visit'}</div>
+    </div>
+    <div class="rp-info-grid">
+      <div class="rp-info-item accent"><div class="rp-info-lbl">District</div><div class="rp-info-val">${d||'—'}</div></div>
+      <div class="rp-info-item"><div class="rp-info-lbl">Contractor(s)</div><div class="rp-info-val" style="font-family:'Outfit',sans-serif;font-size:8px;">${ctorRows.length?ctorRows[0].name||'—':'—'}</div></div>
+      <div class="rp-info-item"><div class="rp-info-lbl">Consultant</div><div class="rp-info-val" style="font-family:'Outfit',sans-serif;font-size:8px;">${v('f_consultant')||'—'}</div></div>
+      <div class="rp-info-item"><div class="rp-info-lbl">Sites Visited</div><div class="rp-info-val">${siteRows.length}</div></div>
+      <div class="rp-info-item"><div class="rp-info-lbl">Rep. Officer</div><div class="rp-info-val" style="font-family:'Outfit',sans-serif;font-size:8px;">${v('f_repOfficer')||'—'}</div></div>
+      <div class="rp-info-item"><div class="rp-info-lbl">Designation</div><div class="rp-info-val" style="font-family:'Outfit',sans-serif;font-size:8px;">${v('f_repDesig')||'—'}</div></div>
+      ${v('f_materialTests')?`<div class="rp-info-item" style="border-left-color:${v('f_materialTests')==='Conducted'?'#3d6b5f':v('f_materialTests')==='Not Conducted'?'#7a2836':'#8b6914'};"><div class="rp-info-lbl">Material Tests</div><div class="rp-info-val" style="font-family:'Outfit',sans-serif;font-size:8px;font-weight:700;color:${v('f_materialTests')==='Conducted'?'#3d6b5f':v('f_materialTests')==='Not Conducted'?'#7a2836':'#8b6914'};">${v('f_materialTests')}</div></div>`:''}
+      ${v('f_siteRegister')?`<div class="rp-info-item" style="border-left-color:${v('f_siteRegister')==='Available'?'#3d6b5f':'#7a2836'};"><div class="rp-info-lbl">Site Register</div><div class="rp-info-val" style="font-family:'Outfit',sans-serif;font-size:8px;font-weight:700;color:${v('f_siteRegister')==='Available'?'#3d6b5f':'#7a2836'};">${v('f_siteRegister')}</div></div>`:''}
+    </div>
+    <div class="rp-progress-row">
+      <div class="rp-prog-box"><div class="rp-prog-val" style="color:${pctColor(phys)}">${phys.toFixed(1)}%</div><div class="rp-prog-lbl">Physical</div><div class="rp-prog-bar"><div class="rp-prog-fill" style="width:${phys}%;background:${pctColor(phys)}"></div></div></div>
+      <div class="rp-prog-box"><div class="rp-prog-val" style="color:#3a4f6b">${fin.toFixed(1)}%</div><div class="rp-prog-lbl">Financial</div><div class="rp-prog-bar"><div class="rp-prog-fill" style="width:${fin}%;background:#3a4f6b"></div></div></div>
+      <div class="rp-prog-box"><div class="rp-prog-val" style="font-size:11px;">${v('f_plannedProg')||'—'}%</div><div class="rp-prog-lbl">Planned</div></div>
+    </div>
+    ${siteRows.length?`<div class="rp-section-title">Sites Visited (${siteRows.length})</div>${sitesHtml}${extraSites}`:''}
+    ${siteRows.length&&siteObs[0]&&siteObs[0].obs?`<div class="rp-obs-box" style="margin-top:8px;"><div class="rp-obs-title">Obs: ${siteRows[0].name||'Site 1'}</div><div class="rp-obs-text">${(siteObs[0].obs||'').substring(0,120)}…</div></div>`:''}
+    ${photosPreviewHtml?`<div class="rp-section-title">Evidence</div><div class="rp-photo-placeholder">${photosPreviewHtml}</div>`:''}
+    ${v('f_issues')?`<div class="rp-issue-box"><div class="rp-issue-title">⚠ Issues</div><div class="rp-obs-text">${v('f_issues').substring(0,100)}…</div></div>`:''}
+    <div class="rp-footer">
+      <div class="rp-sign"><div class="rp-sign-line"></div><div class="rp-sign-name">${v('f_preparedBy')||'___________'}</div><div class="rp-sign-role">${v('f_preparedRole')||'Prepared By'}</div></div>
+      <div class="rp-sign"><div class="rp-sign-line"></div><div class="rp-sign-name">${v('f_reviewedBy')||'___________'}</div><div class="rp-sign-role">${v('f_reviewedRole')||'Reviewed By'}</div></div>
+      <div class="rp-sign"><div class="rp-sign-line"></div><div class="rp-sign-name">${v('f_approvedBy')||'___________'}</div><div class="rp-sign-role">${v('f_approvedRole')||'Approved By'}</div></div>
+    </div>`;
+}
+
+// ═══ SAVE PROJECT ══════════════════════════════════════════════════════════════
+function saveProject(){
+  // Capture latest obs textarea values
+  siteRows.forEach((_,i)=>{
+    const obsEl=document.getElementById('obs_obs_'+i);
+    const recEl=document.getElementById('obs_rec_'+i);
+    if(!siteObs[i])siteObs[i]={obs:'',rec:'',photos:[]};
+    if(obsEl)siteObs[i].obs=obsEl.value;
+    if(recEl)siteObs[i].rec=recEl.value;
+  });
+
+  const id=currentId||'RPT2_'+Date.now();
+  const project={
+    id,
+    title:v('f_title')||'Untitled Report',
+    refNo:v('f_refNo'),visitDate:v('f_visitDate'),visitType:v('f_visitType'),
+    district:v('f_district'),consultant:v('f_consultant'),
+    startDate:v('f_startDate'),endDate:v('f_endDate'),
+    totalSites:v('f_totalSites'),pkgStatus:v('f_pkgStatus'),
+    physicalProgress:v('f_physInput'),financialProgress:v('f_finInput'),
+    plannedProgress:v('f_plannedProg'),distRemark:v('f_distRemark'),
+    materialTests:v('f_materialTests'),siteRegister:v('f_siteRegister'),complianceRemark:v('f_complianceRemark'),
+    esProtocols:v('f_esProtocols'),esmpStatus:v('f_esmpStatus'),safetyMeasures:v('f_safetyMeasures'),wasteManagement:v('f_wasteManagement'),esRemarks:v('f_esRemarks'),
+    repOfficer:v('f_repOfficer'),repDesig:v('f_repDesig'),
+    repOrg:v('f_repOrg'),repContact:v('f_repContact'),
+    issues:v('f_issues'),remarks:v('f_remarks'),
+    preparedBy:v('f_preparedBy'),preparedRole:v('f_preparedRole'),
+    reviewedBy:v('f_reviewedBy'),reviewedRole:v('f_reviewedRole'),
+    approvedBy:v('f_approvedBy'),approvedRole:v('f_approvedRole'),
+    submissionDate:v('f_submissionDate'),
+    status:v('f_reportStatus')||'draft',
+    contractors:[...ctorRows],
+    sites:[...siteRows],
+    team:[...teamMembers],
+    siteObs:{...siteObs},
+    savedAt:new Date().toISOString()
+  };
+  const idx=projects.findIndex(p=>p.id===id);
+  if(idx>=0)projects[idx]=project;else projects.push(project);
+  currentId=id;
+  try{localStorage.setItem('kphcip_v2_reports',JSON.stringify(projects));}catch(e){toast('Storage full — export JSON backup','error');return;}
+  refreshHome();
+  toast('✓ Project saved!','success');
+}
+
+// ═══ LOAD PROJECT ══════════════════════════════════════════════════════════════
+function loadProject(id){
+  const p=projects.find(x=>x.id===id);if(!p)return;
+  currentId=id;
+  const sv=(fid,val)=>{const el=document.getElementById(fid);if(el)el.value=val||'';};
+  sv('f_refNo',p.refNo);sv('f_visitDate',p.visitDate);sv('f_title',p.title);sv('f_visitType',p.visitType);
+  sv('f_district',p.district);sv('f_consultant',p.consultant);
+  sv('f_startDate',p.startDate);sv('f_endDate',p.endDate);
+  sv('f_totalSites',p.totalSites);sv('f_pkgStatus',p.pkgStatus);
+  sv('f_physInput',p.physicalProgress);sv('f_finInput',p.financialProgress);
+  sv('f_plannedProg',p.plannedProgress);sv('f_distRemark',p.distRemark);
+  sv('f_materialTests',p.materialTests);sv('f_siteRegister',p.siteRegister);sv('f_complianceRemark',p.complianceRemark);
+  sv('f_esProtocols',p.esProtocols);sv('f_esmpStatus',p.esmpStatus);sv('f_safetyMeasures',p.safetyMeasures);sv('f_wasteManagement',p.wasteManagement);sv('f_esRemarks',p.esRemarks);
+  if(p.esProtocols){updateESStyle();}
+  sv('f_repOfficer',p.repOfficer);sv('f_repDesig',p.repDesig);
+  sv('f_repOrg',p.repOrg);sv('f_repContact',p.repContact);
+  sv('f_issues',p.issues);sv('f_remarks',p.remarks);
+  sv('f_preparedBy',p.preparedBy);sv('f_preparedRole',p.preparedRole);
+  sv('f_reviewedBy',p.reviewedBy);sv('f_reviewedRole',p.reviewedRole);
+  sv('f_approvedBy',p.approvedBy);sv('f_approvedRole',p.approvedRole);
+  sv('f_submissionDate',p.submissionDate);sv('f_reportStatus',p.status);
+  syncProg('phys',p.physicalProgress||0);syncProg('fin',p.financialProgress||0);
+  ctorRows=[...(p.contractors||[])];
+  siteRows=[...(p.sites||[])];
+  teamMembers=[...(p.team||[])];
+  siteObs={...(p.siteObs||{})};
+  renderCtorTable();renderSitesTable();renderTeam();renderSiteObsBlocks();
+  updatePreview();
+  setTopbarEdit(true);
+  nav('editor',document.querySelectorAll('.nav-item')[1]);
+  refreshHome();
+}
+
+// ═══ DELETE ════════════════════════════════════════════════════════════════════
+function deleteProject(id){
+  if(!confirm('Delete this report?'))return;
+  projects=projects.filter(p=>p.id!==id);
+  if(currentId===id)currentId=null;
+  localStorage.setItem('kphcip_v2_reports',JSON.stringify(projects));
+  refreshHome();toast('Deleted','error');
+}
+
+// ═══ EXPORT ════════════════════════════════════════════════════════════════════
+function exportAll(){
+  if(!projects.length){toast('No projects','error');return;}
+  const blob=new Blob([JSON.stringify(projects,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='KPHCIP_Reports_'+new Date().toISOString().split('T')[0]+'.json';a.click();
+  toast('✓ Exported '+projects.length+' reports');
+}
+function clearAll(){if(!confirm('Delete ALL saved reports?'))return;projects=[];currentId=null;localStorage.removeItem('kphcip_v2_reports');refreshHome();toast('Cleared','error');}
+
+// ═══ GENERATE / PRINT ══════════════════════════════════════════════════════════
+function generateReport(){
+  // Save obs first
+  siteRows.forEach((_,i)=>{
+    const oEl=document.getElementById('obs_obs_'+i),rEl=document.getElementById('obs_rec_'+i);
+    if(!siteObs[i])siteObs[i]={obs:'',rec:'',photos:[]};
+    if(oEl)siteObs[i].obs=oEl.value;if(rEl)siteObs[i].rec=rEl.value;
+  });
+
+  const phys=parseFloat(v('f_physInput'))||0;
+  const fin=parseFloat(v('f_finInput'))||0;
+
+  const ctorTableRows=ctorRows.map((c,i)=>`<tr><td>${i+1}</td><td><b>${c.name||'—'}</b></td><td>${c.pkg||'—'}</td><td>${c.phase||'—'}</td><td>PKR ${c.cost||'—'}M</td><td>PKR ${c.payment||'—'}M</td></tr>`).join('');
+  const sitesTableRows=siteRows.map((s,i)=>`<tr><td>${i+1}</td><td><b>${s.name||'—'}</b></td><td>${s.emis||'—'}</td><td>${s.pkgNo||'—'}</td><td>${s.lat||'—'}, ${s.lng||'—'}</td><td>${s.scope}</td><td style="color:${pctColor(s.physical)};font-weight:700;">${s.physical}%</td><td>${s.remarks||'—'}</td></tr>`).join('');
+  const teamTableRows=teamMembers.map((m,i)=>`<tr><td>${i+1}</td><td><b>${m.name||'—'}</b></td><td>${m.designation||'—'}</td></tr>`).join('');
+
+  // Per-site observations block (observations → photos → recommendations)
+  const siteObsHtml=siteRows.map((s,i)=>{
+    const obs=siteObs[i]||{obs:'',rec:'',photos:[]};
+    const obsText=obs.obs||(s.remarks||'No observations recorded.');
+    const recText=obs.rec||'No site-specific recommendations.';
+    const photosHtml=(obs.photos||[]).map(p=>`<div class="pr-photo-item"><img src="${p.src}" alt="site photo"/><div class="pr-photo-caption">${p.caption||p.name||''}</div></div>`).join('');
+
+    return `<div class="pr-site-obs-block">
+      <div class="pr-site-obs-hdr">
+        <div class="pr-site-obs-hdr-name">Site ${i+1}: ${s.name||'—'}</div>
+        <div class="pr-site-obs-hdr-pkg">Package: ${s.pkgNo||'—'} &nbsp;|&nbsp; Scope: ${s.scope} &nbsp;|&nbsp; Physical: ${s.physical}% &nbsp;|&nbsp; Coordinates: ${s.lat||'—'}, ${s.lng||'—'}</div>
+      </div>
+      <div class="pr-site-obs-body">
+        <div class="pr-box pr-box-obs">
+          <div class="pr-box-title" style="color:#8b6914;">Field Observations / Findings</div>
+          <div>${obsText.replace(/\n/g,'<br/>')}</div>
+        </div>
+        ${photosHtml?`<div class="pr-h2" style="margin-top:12px;">Pictorial Evidence — ${s.name||'Site '+( i+1)}</div><div class="pr-photo-grid">${photosHtml}</div>`:''}
+        <div class="pr-box pr-box-rec">
+          <div class="pr-box-title" style="color:#4a7c6f;">Recommendations</div>
+          <div>${recText.replace(/\n/g,'<br/>')}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('printReport').innerHTML=`
+  <div class="pr-page">
+    <div class="pr-header">
+      <div class="pr-logo">Govt<br>of KPK<br>Logo</div>
+      <div class="pr-title-area">
+        <div class="pr-main-title">${v('f_title')||'Site Visit Monitoring Report'}<br>KP-HCIP Education Component</div>
+        <div class="pr-sub-title">School Construction Progress — ${v('f_district')||'District'}</div>
+        <div class="pr-tags">
+          <span class="pr-tag">${v('f_visitType')||'Site Visit'}</span>
+          <span class="pr-tag">${v('f_district')||'—'}</span>
+          <span class="pr-tag">${v('f_pkgStatus')||'—'}</span>
+        </div>
+      </div>
+      <div class="pr-ref-box">Ref: ${v('f_refNo')||'—'}<br>Date: ${v('f_visitDate')||'—'}<br>Visit: ${v('f_visitType')||'—'}</div>
+    </div>
+
+    <table class="pr-info-table">
+      <tr><td>District</td><td>${v('f_district')||'—'}</td><td>Visit Date</td><td>${v('f_visitDate')||'—'}</td></tr>
+      <tr><td>Consultant / Supervisor</td><td colspan="3">${v('f_consultant')||'—'}</td></tr>
+      <tr><td>Contract Start Date</td><td>${v('f_startDate')||'—'}</td><td>Completion Date</td><td>${v('f_endDate')||'—'}</td></tr>
+      <tr><td>Total Sites in Package</td><td>${v('f_totalSites')||siteRows.length}</td><td>Package Status</td><td><b>${v('f_pkgStatus')||'—'}</b></td></tr>
+      <tr><td>Physical Progress</td><td><b style="color:${pctColor(phys)}">${phys.toFixed(1)}%</b></td><td>Planned Progress</td><td>${v('f_plannedProg')||'—'}%</td></tr>
+      <tr><td>Financial Progress</td><td><b>${fin.toFixed(1)}%</b></td><td>District Remarks</td><td>${v('f_distRemark')||'—'}</td></tr>
+      <tr>
+        <td>Material Tests</td>
+        <td style="font-weight:700;color:${v('f_materialTests')==='Conducted'?'#3d6b5f':v('f_materialTests')==='Not Conducted'?'#7a2836':'#8b6914'}">${v('f_materialTests')||'—'}</td>
+        <td>Site Register</td>
+        <td style="font-weight:700;color:${v('f_siteRegister')==='Available'?'#3d6b5f':'#7a2836'}">${v('f_siteRegister')||'—'}</td>
+      </tr>
+      ${v('f_complianceRemark')?`<tr><td>Compliance Remarks</td><td colspan="3">${v('f_complianceRemark')}</td></tr>`:''}
+    </table>
+
+    <!-- E&S SECTION IN PRINT -->
+    <div class="pr-h2">Environmental & Safety (E&S) Status</div>
+    <table class="pr-info-table">
+      <tr>
+        <td>E&S Protocols</td>
+        <td style="font-weight:700;color:${v('f_esProtocols')==='Followed'?'#2d6a2d':v('f_esProtocols')==='Not Followed'?'#7a2836':'#8b6914'}">${v('f_esProtocols')||'—'}</td>
+        <td>ESMP Status</td>
+        <td style="font-weight:700;color:${v('f_esmpStatus')==='Available at Site'?'#2d6a2d':v('f_esmpStatus')==='Not Available'?'#7a2836':'#8b6914'}">${v('f_esmpStatus')||'—'}</td>
+      </tr>
+      <tr>
+        <td>Safety Measures</td>
+        <td style="font-weight:700;color:${v('f_safetyMeasures')==='Adequate'?'#2d6a2d':v('f_safetyMeasures')==='Inadequate'?'#7a2836':'#8b6914'}">${v('f_safetyMeasures')||'—'}</td>
+        <td>Waste Management</td>
+        <td style="font-weight:700;color:${v('f_wasteManagement')==='Properly Managed'?'#2d6a2d':v('f_wasteManagement')==='Not Managed'?'#7a2836':'#8b6914'}">${v('f_wasteManagement')||'—'}</td>
+      </tr>
+      ${v('f_esRemarks')?`<tr><td>E&S Observations</td><td colspan="3">${v('f_esRemarks')}</td></tr>`:''  }
+    </table>
+
+    <div class="pr-prog-row">
+      <div class="pr-prog-box" style="border-top:3px solid ${pctColor(phys)}"><div class="pr-prog-val" style="color:${pctColor(phys)}">${phys.toFixed(1)}%</div><div class="pr-prog-lbl">Physical Progress</div></div>
+      <div class="pr-prog-box" style="border-top:3px solid #3a4f6b"><div class="pr-prog-val" style="color:#3a4f6b">${fin.toFixed(1)}%</div><div class="pr-prog-lbl">Financial Progress</div></div>
+      <div class="pr-prog-box" style="border-top:3px solid #8b6914"><div class="pr-prog-val">${v('f_plannedProg')||'—'}%</div><div class="pr-prog-lbl">Planned Progress</div></div>
+    </div>
+
+    ${ctorRows.length?`
+    <div class="pr-h2">Contractors & Packages</div>
+    <table class="pr-ctor-table">
+      <thead><tr><th>#</th><th>Contractor Name</th><th>Package No.</th><th>Phase</th><th>Contract Cost</th><th>Upto-date Payment</th></tr></thead>
+      <tbody>${ctorTableRows}</tbody>
+    </table>`:''}
+
+    <div class="pr-h2">Reporting Officer</div>
+    <table class="pr-info-table">
+      <tr><td>Name</td><td><b>${v('f_repOfficer')||'—'}</b></td><td>Designation</td><td>${v('f_repDesig')||'—'}</td></tr>
+      <tr><td>Organization</td><td>${v('f_repOrg')||'—'}</td><td>Contact</td><td>${v('f_repContact')||'—'}</td></tr>
+    </table>
+
+    ${teamMembers.length?`
+    <div class="pr-h2">Visiting Team</div>
+    <table class="pr-team-table">
+      <thead><tr><th>#</th><th>Name</th><th>Designation / Role</th></tr></thead>
+      <tbody>${teamTableRows}</tbody>
+    </table>`:''}
+
+    ${siteRows.length?`
+    <div class="pr-h2">Sites Visited — ${siteRows.length} School(s)</div>
+    <table class="pr-sites-table">
+      <thead><tr><th>#</th><th>School / Site Name</th><th>EMIS</th><th>Package</th><th>Coordinates</th><th>Scope</th><th>Physical %</th><th>Remarks</th></tr></thead>
+      <tbody>${sitesTableRows}</tbody>
+    </table>`:''}
+
+    ${siteRows.length?`
+    <div class="pr-h2">Field Observations, Pictorial Evidence & Recommendations (Per Site)</div>
+    ${siteObsHtml}`:''}
+
+    ${v('f_issues')?`
+    <div class="pr-h2">Issues / Problems Identified</div>
+    <div class="pr-box pr-box-issue">
+      <div class="pr-box-title" style="color:#7a2836;">Issues & Non-Conformities</div>
+      <div>${v('f_issues').split('\n').filter(l=>l.trim()).map(l=>'• '+l).join('<br/>')||v('f_issues')}</div>
+    </div>`:''}
+
+    ${v('f_remarks')?`
+    <div class="pr-h2">General Remarks</div>
+    <div class="pr-box pr-box-remark">
+      <div class="pr-box-title" style="color:#3a4f6b;">Other Remarks & Action Items</div>
+      <div>${v('f_remarks').replace(/\n/g,'<br/>')}</div>
+    </div>`:''}
+
+    <div class="pr-footer">
+      <div><div class="pr-sign-line"></div><div class="pr-sign-name">${v('f_preparedBy')||'________________________'}</div><div class="pr-sign-role">${v('f_preparedRole')||'Prepared By'}</div><div class="pr-sign-date">Date: ___________</div></div>
+      <div><div class="pr-sign-line"></div><div class="pr-sign-name">${v('f_reviewedBy')||'________________________'}</div><div class="pr-sign-role">${v('f_reviewedRole')||'Reviewed By'}</div><div class="pr-sign-date">Date: ___________</div></div>
+      <div><div class="pr-sign-line"></div><div class="pr-sign-name">${v('f_approvedBy')||'________________________'}</div><div class="pr-sign-role">${v('f_approvedRole')||'Approved By'}</div><div class="pr-sign-date">Date: ___________</div></div>
+    </div>
+  </div>`;
+  window.print();
+}
+
+// ═══ INIT ══════════════════════════════════════════════════════════════════════
+window.addEventListener('load',()=>{
+  refreshHome();
+  renderCtorTable();renderSitesTable();renderTeam();renderSiteObsBlocks();
+  document.getElementById('f_visitDate').value=new Date().toISOString().split('T')[0];
+});
+</script>
+</body>
+</html>
